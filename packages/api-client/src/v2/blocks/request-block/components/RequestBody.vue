@@ -4,6 +4,7 @@ import { ScalarIcon } from '@scalar/components/icon'
 import { ScalarIconButton } from '@scalar/components/icon-button'
 import { ScalarListbox } from '@scalar/components/listbox'
 import { CONTENT_TYPES } from '@scalar/helpers/http/content-types'
+import { isXmlMediaType } from '@scalar/helpers/http/is-xml-media-type'
 import { parseMimeType } from '@scalar/helpers/http/mime-type'
 import { isObject } from '@scalar/helpers/object/is-object'
 import { objectEntries } from '@scalar/helpers/object/object-entries'
@@ -43,6 +44,7 @@ const {
   exampleKey,
   environment,
   requestBodyCompositionSelection,
+  openapiVersion,
   title,
   defaultView = 'raw',
 } = defineProps<{
@@ -54,6 +56,8 @@ const {
   title: string
   /** Selected environment */
   environment: XScalarEnvironment
+  /** Originating OpenAPI version, used for XML mapping rules. */
+  openapiVersion?: string
   /** Selected anyOf/oneOf request-body variants keyed by schema path */
   requestBodyCompositionSelection?: Record<string, number>
   /**
@@ -185,6 +189,7 @@ const example = computed(
       selectedContentType.value,
       exampleKey,
       requestBodyCompositionSelection,
+      openapiVersion,
     ),
 )
 
@@ -282,7 +287,8 @@ watch(
     }
 
     const codec = structuredCodec.value
-    if (!requestBody || !codec) {
+    const isXml = isXmlMediaType(selectedContentType.value)
+    if (!requestBody || (!codec && !isXml)) {
       return
     }
 
@@ -292,12 +298,18 @@ watch(
       requestBody,
       selectedContentType.value,
       requestBodyCompositionSelection,
+      openapiVersion,
     )
 
     emits('update:value', {
       // A branch with no writable content generates `null`/`undefined`; clear the editor rather than
       // writing the literal text `null` or leaving the previously selected branch's body behind.
-      payload: selectedValue == null ? '' : codec.stringify(selectedValue),
+      payload:
+        selectedValue == null
+          ? ''
+          : isXml
+            ? String(selectedValue)
+            : codec!.stringify(selectedValue),
       contentType: selectedContentType.value,
     })
   },
@@ -487,9 +499,11 @@ const canGenerateExample = computed(() =>
             content=""
             :environment="environment"
             :language="
-              contentTypeToLanguageMap[
-                selectedContentType as keyof typeof contentTypeToLanguageMap
-              ] ?? 'plaintext'
+              isXmlMediaType(selectedContentType)
+                ? 'xml'
+                : (contentTypeToLanguageMap[
+                    selectedContentType as keyof typeof contentTypeToLanguageMap
+                  ] ?? 'plaintext')
             "
             lineNumbers
             lint
