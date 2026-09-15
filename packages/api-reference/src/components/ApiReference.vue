@@ -19,6 +19,7 @@ import {
   ScalarColorModeToggleIcon,
 } from '@scalar/components/color-mode-toggle'
 import { addScalarClassesToHeadless } from '@scalar/components/helpers'
+import { MARKDOWN_RENDER_HOOKS } from '@scalar/components/markdown'
 import {
   ScalarSidebarFooter,
   ScalarSidebarSection,
@@ -540,6 +541,7 @@ const pluginManager = createPluginManager({
   },
 })
 provide(PLUGIN_MANAGER_SYMBOL, pluginManager)
+provide(MARKDOWN_RENDER_HOOKS, pluginManager.getMarkdownRenderHooks())
 
 pluginManager.notifyInit(mergedConfig.value)
 
@@ -1425,6 +1427,7 @@ onMounted(async () => {
 
   apiClient.value = createApiClientModal({
     el: modal.value,
+    mountOnInitialize: false,
     eventBus,
     workspaceStore: clientStore,
     options: runtimeConfig,
@@ -1433,6 +1436,11 @@ onMounted(async () => {
       ...mapConfigPlugins(mergedConfig, environment),
     ],
   })
+  apiClient.value.app.provide(
+    MARKDOWN_RENDER_HOOKS,
+    pluginManager.getMarkdownRenderHooks(),
+  )
+  apiClient.value.mount(modal.value)
 })
 onBeforeUnmount(() => {
   stopPreloadingDocuments()
