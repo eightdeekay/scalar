@@ -9,7 +9,10 @@ import {
   getResolvedRef,
   mergeSiblingReferences,
 } from '@scalar/workspace-store/helpers/get-resolved-ref'
-import { getExample, getExampleFromSchema } from '@scalar/workspace-store/request-example'
+import {
+  getExample,
+  getExampleFromSchema,
+} from '@scalar/workspace-store/request-example'
 import type {
   MediaTypeObject,
   OpenApiDocument,
@@ -527,10 +530,29 @@ const getSchemaView = (schema: SchemaObject): SchemaView =>
                   v-for="(bodyContent, mediaType) in entry.requestBody.content"
                   :key="mediaType">
                   <h5>Content-Type: {{ mediaType }}</h5>
-                  <template v-if="resolveSchema(bodyContent.schema) || (isXmlMediaType(String(mediaType)) && getMediaExample(bodyContent))">
-                    <Schema v-if="resolveSchema(bodyContent.schema)" :schema="resolveSchema(bodyContent.schema)!" />
+                  <template
+                    v-if="
+                      resolveSchema(bodyContent.schema) ||
+                      (isXmlMediaType(String(mediaType)) &&
+                        getMediaExample(bodyContent))
+                    ">
+                    <Schema
+                      v-if="resolveSchema(bodyContent.schema)"
+                      :schema="resolveSchema(bodyContent.schema)!" />
                     <p><strong>Example:</strong></p>
-                    <XmlOrJson :example="getMediaExample(bodyContent)" mode="write" :modelValue="isXmlMediaType(String(mediaType)) ? undefined : getExampleFromSchema(resolveSchema(bodyContent.schema)!)" :openapiVersion="content.openapi" :schema="bodyContent.schema" :xml="isXmlMediaType(String(mediaType))" />
+                    <XmlOrJson
+                      :example="getMediaExample(bodyContent)"
+                      mode="write"
+                      :modelValue="
+                        isXmlMediaType(String(mediaType))
+                          ? undefined
+                          : getExampleFromSchema(
+                              resolveSchema(bodyContent.schema)!,
+                            )
+                      "
+                      :openapiVersion="content.openapi"
+                      :schema="bodyContent.schema"
+                      :xml="isXmlMediaType(String(mediaType))" />
                   </template>
                 </template>
               </section>
@@ -559,12 +581,31 @@ const getSchemaView = (schema: SchemaObject): SchemaView =>
                         :key="mediaType">
                         <section>
                           <h6>Content-Type: {{ mediaType }}</h6>
-                          <template v-if="resolveSchema(responseContent.schema) || (isXmlMediaType(String(mediaType)) && getMediaExample(responseContent))">
-                            <Schema v-if="resolveSchema(responseContent.schema)" :schema="
+                          <template
+                            v-if="
+                              resolveSchema(responseContent.schema) ||
+                              (isXmlMediaType(String(mediaType)) &&
+                                getMediaExample(responseContent))
+                            ">
+                            <Schema
+                              v-if="resolveSchema(responseContent.schema)"
+                              :schema="
                                 resolveSchema(responseContent.schema)!
                               " />
                             <p><strong>Example:</strong></p>
-                            <XmlOrJson :example="getMediaExample(responseContent)" mode="read" :modelValue="isXmlMediaType(String(mediaType)) ? undefined : getExampleFromSchema(resolveSchema(responseContent.schema)!)" :openapiVersion="content.openapi" :schema="responseContent.schema" :xml="isXmlMediaType(String(mediaType))" />
+                            <XmlOrJson
+                              :example="getMediaExample(responseContent)"
+                              mode="read"
+                              :modelValue="
+                                isXmlMediaType(String(mediaType))
+                                  ? undefined
+                                  : getExampleFromSchema(
+                                      resolveSchema(responseContent.schema)!,
+                                    )
+                              "
+                              :openapiVersion="content.openapi"
+                              :schema="responseContent.schema"
+                              :xml="isXmlMediaType(String(mediaType))" />
                           </template>
                         </section>
                       </template>
