@@ -1,5 +1,11 @@
 # @scalar/openapi-to-markdown
 
+## 0.7.0
+
+### Minor Changes
+
+- [#10224](https://github.com/scalar/scalar/pull/10224): Add a reusable renderer that loads an OpenAPI document once and generates multiple Markdown or HTML pages from it.
+
 ## 0.6.0
 
 ### Minor Changes
