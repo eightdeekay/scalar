@@ -20,9 +20,14 @@ describe('x-badge', () => {
       name: 'Beta',
       position: 'before' as const,
       color: '#ff6b6b',
+      textColor: 'white',
     }
     expect(validate(XBadge, value)).toBe(true)
     expect(coerce(XBadge, value)).toEqual(value)
+  })
+
+  it('leaves textColor out when it is not given', () => {
+    expect(coerce(XBadge, { name: 'Beta', color: '#ff6b6b' })).toEqual({ name: 'Beta', color: '#ff6b6b' })
   })
 
   it('validates array with single badge', () => {
