@@ -6,7 +6,6 @@ import {
   ScalarCardSection,
 } from '@scalar/components/card'
 import { ScalarIcon } from '@scalar/components/icon'
-import { ScalarMarkdown } from '@scalar/components/markdown'
 import { objectKeys } from '@scalar/helpers/object/object-keys'
 import { useClipboard } from '@scalar/use-hooks/useClipboard'
 import type { WorkspaceEventBus } from '@scalar/workspace-store/events'
@@ -19,6 +18,10 @@ import type {
 import { computed, ref, toValue, useId, watch } from 'vue'
 
 import ScreenReader from '@/components/ScreenReader.vue'
+import {
+  EditableDescription,
+  useEditableDescription,
+} from '@/features/editable-description'
 import ExampleSchema from '@/features/example-responses/ExampleSchema.vue'
 import { useLocalization } from '@/features/localization'
 
@@ -47,6 +50,7 @@ const { responses, selectedExample, eventBus, selectedContentTypes } =
     selectedContentTypes?: Record<string, string>
   }>()
 const { translate } = useLocalization()
+const { canEdit } = useEditableDescription()
 
 const id = useId()
 const { copyToClipboard } = useClipboard()
@@ -237,7 +241,11 @@ const showSchema = ref(false)
         :response="currentResponseContent" />
     </ScalarCardSection>
     <ScalarCardFooter
-      v-if="currentResponse?.description || hasMultipleExamples"
+      v-if="
+        currentResponse?.description ||
+        hasMultipleExamples ||
+        canEdit(currentResponse)
+      "
       class="response-card-footer">
       <ExamplePicker
         v-if="hasMultipleExamples"
@@ -246,10 +254,10 @@ const showSchema = ref(false)
         :modelValue="selectedExampleKey"
         @update:modelValue="selectExample" />
       <div class="response-description">
-        <ScalarMarkdown
-          v-if="currentResponse?.description"
+        <EditableDescription
+          v-if="currentResponse?.description || canEdit(currentResponse)"
           class="response-description-markdown"
-          :value="currentResponse.description" />
+          :target="currentResponse" />
       </div>
     </ScalarCardFooter>
   </ScalarCard>
