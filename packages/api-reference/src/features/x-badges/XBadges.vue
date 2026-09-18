@@ -27,7 +27,9 @@ const filteredBadges = computed<XBadge[]>(() => {
     <template
       v-for="badge in filteredBadges"
       :key="badge.name">
-      <Badge :color="badge.color">
+      <Badge
+        :color="badge.color"
+        :textColor="badge.textColor">
         {{ badge.name }}
       </Badge>
     </template>

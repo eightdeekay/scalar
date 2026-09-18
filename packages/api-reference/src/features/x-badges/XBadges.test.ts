@@ -148,6 +148,23 @@ describe('XBadges', () => {
       expect(renderedBadges[1]?.attributes('style')).toContain('color: blue')
     })
 
+    it('uses textColor for the text when given, and derives it from color otherwise', () => {
+      const badges = [
+        { name: 'Explicit', position: 'before' as const, color: '#336699', textColor: 'white' },
+        { name: 'Derived', position: 'before' as const, color: '#336699' },
+      ]
+
+      const wrapper = mount(XBadges, {
+        props: { position: 'before', badges },
+      })
+
+      const renderedBadges = wrapper.findAll('.badge')
+      expect(renderedBadges[0]?.attributes('style')).toContain('color: white')
+      // jsdom normalizes the color-mix expression, so only the shape is asserted.
+      expect(renderedBadges[1]?.attributes('style')).toMatch(/color: color-mix\(/)
+      expect(renderedBadges[1]?.attributes('style')).not.toContain('color: white')
+    })
+
     it('renders badge names as text content', () => {
       const badges = [createBadge('Test Badge', 'before', 'red')]
 

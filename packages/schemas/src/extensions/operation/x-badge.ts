@@ -21,6 +21,11 @@ export const XBadge = object(
         typeComment: 'The color of the badge in various formats (keywords, RGB, RGBA, HSL, HSLA, Hexadecimal)',
       }),
     ),
+    textColor: optional(
+      string({
+        typeComment: 'The color of the badge text, in the same formats as color. Derived from color when omitted.',
+      }),
+    ),
   },
   {
     typeName: 'XBadge',

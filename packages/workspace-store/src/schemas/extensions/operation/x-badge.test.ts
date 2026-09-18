@@ -21,11 +21,25 @@ describe('x-badge', () => {
       name: 'Beta',
       position: 'before',
       color: '#ff6b6b',
+      textColor: 'white',
     })
     expect(result).toEqual({
       name: 'Beta',
       position: 'before',
       color: '#ff6b6b',
+      textColor: 'white',
+    })
+  })
+
+  it('leaves textColor out when it is not given', () => {
+    const result = Value.Parse(XBadgeSchema, { name: 'Beta', color: '#ff6b6b' })
+    expect(result).not.toHaveProperty('textColor')
+  })
+
+  it('holds textColor to the same formats as color', () => {
+    expect(() => Value.Parse(XBadgeSchema, { name: 'Beta', textColor: 'not a color!' })).toThrow()
+    expect(Value.Parse(XBadgeSchema, { name: 'Beta', textColor: 'rgb(255, 255, 255)' })).toMatchObject({
+      textColor: 'rgb(255, 255, 255)',
     })
   })
 

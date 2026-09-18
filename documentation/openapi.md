@@ -474,6 +474,7 @@ paths:
 +        - name: 'Gamma'
 +          position: after
 +          color: '#ffcc00'
++          textColor: '#333333'
 ```
 
 | Option   | Type   | Description                                                                                                                 |
@@ -481,6 +482,7 @@ paths:
 | name     | string | **REQUIRED**. The text that displays in the badge.                                                                          |
 | position | string | The position of the badge in relation to the header. Possible values: `before`, `after`. The default value is `after`.      |
 | color    | string | The color of the badge. It can be defined in various formats such as color keywords, RGB, RGBA, HSL, HSLA, and Hexadecimal. |
+| textColor | string | The color of the badge text, in the same formats as `color`. When omitted, the text color is derived from `color`.       |
 
 ## x-enum-descriptions
 

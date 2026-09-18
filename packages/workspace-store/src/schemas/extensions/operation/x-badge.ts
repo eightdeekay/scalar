@@ -1,6 +1,10 @@
 import { Type } from '@scalar/typebox'
 import { array, literal, object, optional, string, union } from '@scalar/validation'
 
+/** Color keywords, RGB, RGBA, HSL, HSLA, and hexadecimal. Shared by every color field on a badge. */
+const COLOR_PATTERN =
+  '^(#([0-9A-Fa-f]{3}){1,2}|rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)|rgba\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*[0-9.]*\\s*\\)|hsl\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*\\)|hsla\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*,\\s*[0-9.]*\\s*\\)|[a-zA-Z]+)$'
+
 /**
  * Schema for individual badge configuration in x-badges extension.
  * Badges are indicators that can be displayed in API documentation.
@@ -29,8 +33,17 @@ export const XBadgeSchema = Type.Object(
     color: Type.Optional(
       Type.String({
         description: 'The color of the badge in various formats (keywords, RGB, RGBA, HSL, HSLA, Hexadecimal)',
-        pattern:
-          '^(#([0-9A-Fa-f]{3}){1,2}|rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)|rgba\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*[0-9.]*\\s*\\)|hsl\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*\\)|hsla\\(\\s*\\d+\\s*,\\s*\\d+%\\s*,\\s*\\d+%\\s*,\\s*[0-9.]*\\s*\\)|[a-zA-Z]+)$',
+        pattern: COLOR_PATTERN,
+      }),
+    ),
+    /**
+     * The color of the badge text. Same formats as `color`. When omitted the text color is
+     * derived from `color`, which reads poorly on mid-tone backgrounds.
+     */
+    textColor: Type.Optional(
+      Type.String({
+        description: 'The color of the badge text, in the same formats as color',
+        pattern: COLOR_PATTERN,
       }),
     ),
   },
@@ -56,6 +69,11 @@ export type XBadge = {
    * RGB, RGBA, HSL, HSLA, and Hexadecimal.
    */
   color?: string
+  /**
+   * The color of the badge text. Same formats as `color`. When omitted the text color is
+   * derived from `color`.
+   */
+  textColor?: string
 }
 
 export const XBadge = object(
@@ -71,6 +89,11 @@ export const XBadge = object(
     color: optional(
       string({
         typeComment: 'The color of the badge in various formats (keywords, RGB, RGBA, HSL, HSLA, Hexadecimal)',
+      }),
+    ),
+    textColor: optional(
+      string({
+        typeComment: 'The color of the badge text, in the same formats as color. Derived from color when omitted.',
       }),
     ),
   },

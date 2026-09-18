@@ -2,8 +2,10 @@
 import { useBindCx } from '@scalar/use-hooks/useBindCx'
 import { computed } from 'vue'
 
-const { color } = defineProps<{
+const { color, textColor } = defineProps<{
   color?: string
+  /** Overrides the text color derived from `color`, which reads poorly on mid-tone backgrounds. */
+  textColor?: string
 }>()
 
 // Merge fallthrough classes via `cx` so consumer classes can override the base styles.
@@ -11,14 +13,19 @@ defineOptions({ inheritAttrs: false })
 
 const { cx } = useBindCx()
 
-const badgeStyle = computed(() =>
-  color
-    ? {
-        backgroundColor: color,
-        color: `color-mix(in srgb, ${color}, black 40%)`,
-      }
-    : undefined,
-)
+// `undefined` when nothing is set, so the themed `text-*` variants below still apply.
+const badgeStyle = computed(() => {
+  if (!color && !textColor) {
+    return undefined
+  }
+
+  return {
+    ...(color ? { backgroundColor: color } : {}),
+    color:
+      textColor ??
+      (color ? `color-mix(in srgb, ${color}, black 40%)` : undefined),
+  }
+})
 </script>
 
 <template>
